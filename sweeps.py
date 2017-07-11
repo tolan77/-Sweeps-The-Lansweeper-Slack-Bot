@@ -249,6 +249,7 @@ def checkout_command(commandstr):
 
     return resp
 
+
 def parse_slack_output(slack_rtm_output):
     """
         The Slack Real Time Messaging API is an events firehose.
@@ -264,6 +265,32 @@ def parse_slack_output(slack_rtm_output):
                        output['channel']
     return None, None
 
+def where_is_command(usrname_as_str):
+    usrname = usrname_as_str
+    leavebrittneyalone = 1
+    
+    #This step navigates to the searchform at the top of the lansweeper page. Clears it and searches for the username provided.
+    searchform = browser.find_element_by_xpath(".//*[@id='q']")
+    searchform.clear
+    searchform.send_keys(usrname)
+    searchform.submit()
+
+    try:
+        #this returns the text associated with the bar where office is on a user's page if it's there
+        officenumberstr = browser.find_element_by_xpath(".//*[@id='usercontent']/div/table[1]/tbody/tr/td[1]/table/tbody/tr[12]/td[2]").text
+    except:
+        #This is an exemption if the usrname does not return a usr in LS
+        resp = "Maybe you made a typo, there is no user in lansweeper associated with " +usrname
+        leavebrittneyalone = 2
+
+    #This following if statement will only run the following if the previous try statement succeeded and the office number didn't grab something else.
+    if leavebrittneyalone != 2 and len(officenumberstr)<= 4:
+        resp = usrname + " is probably located in room " + officenumberstr
+    #This else statement catches if the officenumber is missing on the user's page and it returns something not the office number
+    else:
+        leavebrittneyalone = 1
+        resp = "There is no office number associated with " +usrname+ " in Lansweeper. You'll have to go to http://intranet/directory :'( "
+    return resp
 
 if __name__ == "__main__":
     READ_WEBSOCKET_DELAY = 1 # 1 second delay between reading from firehose
