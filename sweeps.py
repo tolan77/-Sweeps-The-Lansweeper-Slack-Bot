@@ -14,7 +14,7 @@ HELP_COMMAND = "help"
 STATUS_COMMAND = "status"
 CHECKIN_COMMAND = "checkin"
 CHECKOUT_COMMAND = "checkout"
-WHEREIS_COMMAND = "whereis"
+
 # instantiate Slack clients
 slack_client = SlackClient(SLACK_BOT_TOKEN)
 
@@ -38,8 +38,6 @@ def handle_command(command, channel):
         response = checkin_command(command[len(CHECKIN_COMMAND):].strip())
     if command.startswith(CHECKOUT_COMMAND):
         response = checkout_command(command[len(CHECKOUT_COMMAND):].strip())
-    if command.startswith(WHEREIS_COMMAND):
-        response = where_is_command(command[len(WHEREIS_COMMAND):].strip())
     slack_client.api_call("chat.postMessage", channel=channel,
                           text=response, as_user=True)
 
